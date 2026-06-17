@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fearless Advice: Year 1, Intranet Build v0.19.2</title>
+<title>Fearless Advice: Year 1, Intranet Build v0.20</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jersey+20&display=swap" rel="stylesheet">
@@ -11828,5 +11828,256 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
 })(window);
 </script>
 
+<script id="fa-v020-personality">
+/* ============================================================
+   Fearless Advice v0.20 — Personality System
+   Adapted to the v0.19.5 codebase (verified function names):
+     person(id), setRel, adjustRel, changeMot/Energy/Perf/Mgr,
+     spend(n) [sole focus gate], THRESH[] global, S.team / S.peopleRel.
+   Version-guarded, defensive, additive. No internal rewrites.
+   ============================================================ */
+;(function (G) {
+  'use strict';
+  if (G.FA200PERSONALITY) return;
+  G.FA200PERSONALITY = true;
+
+  function S_(){ try { return G.S; } catch(e){ return null; } }
+  function clmp(v,lo,hi){ return Math.max(lo, Math.min(hi, v)); }
+  function num(v){ return typeof v === 'number' && !isNaN(v); }
+
+  /* ── 1. Persona catalogue ────────────────────────────── */
+  var PERSONAS = {
+    warmMentor:        { id:'warmMentor',        rapportMod:+2, coffeeAcc:+0.15, helpRel:+0.15, helpCap:2, gossipMod:-0.05, approvalMod:-0.05, harshRefusal:false },
+    hypercompetent:    { id:'hypercompetent',    rapportMod: 0, coffeeAcc: 0,    helpRel:+0.20, helpCap:3, gossipMod:-0.05, approvalMod:+0.05, harshRefusal:false },
+    overwhelmedKind:   { id:'overwhelmedKind',   rapportMod:+1, coffeeAcc:-0.05, helpRel:-0.15, helpCap:1, gossipMod: 0,    approvalMod: 0,    harshRefusal:false, softRefusal:true },
+    boxTicker:         { id:'boxTicker',         rapportMod: 0, coffeeAcc:-0.05, helpRel: 0,    helpCap:2, gossipMod:-0.05, approvalMod:+0.10, harshRefusal:false },
+    gossipMagnet:      { id:'gossipMagnet',      rapportMod:+1, coffeeAcc:+0.15, helpRel:-0.05, helpCap:1, gossipMod:+0.15, approvalMod: 0,    harshRefusal:false },
+    creditTaker:       { id:'creditTaker',       rapportMod:+1, coffeeAcc:+0.05, helpRel:+0.05, helpCap:2, gossipMod:+0.05, approvalMod: 0,    harshRefusal:false },
+    conflictAverse:    { id:'conflictAverse',    rapportMod: 0, coffeeAcc:+0.05, helpRel:-0.05, helpCap:1, gossipMod: 0,    approvalMod:-0.05, harshRefusal:false },
+    gatekeeper:        { id:'gatekeeper',        rapportMod:-2, coffeeAcc:-0.20, helpRel:-0.10, helpCap:2, gossipMod:-0.05, approvalMod:+0.05, harshRefusal:true },
+    politicalOperator: { id:'politicalOperator', rapportMod: 0, coffeeAcc:-0.05, helpRel: 0,    helpCap:2, gossipMod:+0.05, approvalMod:+0.05, harshRefusal:false },
+    pedanticExpert:    { id:'pedanticExpert',    rapportMod:-1, coffeeAcc:-0.05, helpRel:+0.10, helpCap:2, gossipMod:-0.10, approvalMod:+0.15, harshRefusal:false },
+    checkedOut:        { id:'checkedOut',        rapportMod: 0, coffeeAcc:+0.05, helpRel:-0.20, helpCap:1, gossipMod:+0.10, approvalMod: 0,    harshRefusal:false, approvalSwing:true },
+    goldenRetriever:   { id:'goldenRetriever',   rapportMod:+4, coffeeAcc:+0.25, helpRel:+0.10, helpCap:1, gossipMod: 0,    approvalMod:-0.05, harshRefusal:false, coffeeMotGain:true }
+  };
+
+  var POOLS = {
+    team:    ['warmMentor','hypercompetent','overwhelmedKind','boxTicker','gossipMagnet','creditTaker','conflictAverse','gatekeeper','politicalOperator','pedanticExpert','checkedOut','goldenRetriever'],
+    manager: ['warmMentor','hypercompetent','boxTicker','creditTaker','conflictAverse','gatekeeper','politicalOperator','pedanticExpert','checkedOut'],
+    senior:  ['politicalOperator','gatekeeper','boxTicker','pedanticExpert','warmMentor','creditTaker','conflictAverse','hypercompetent','checkedOut'],
+    student: ['goldenRetriever','warmMentor','overwhelmedKind','hypercompetent','gossipMagnet','pedanticExpert']
+  };
+  function assignPersona(pool){ var keys = POOLS[pool] || POOLS.team; return keys[Math.floor(Math.random()*keys.length)]; }
+
+  var LABELS = { warmMentor:'Warm Mentor', hypercompetent:'Hypercompetent', overwhelmedKind:'Overwhelmed but Kind', boxTicker:'Box-Ticker', gossipMagnet:'Gossip Magnet', creditTaker:'Credit-Taker', conflictAverse:'Conflict-Averse', gatekeeper:'Gatekeeper', politicalOperator:'Political Operator', pedanticExpert:'Pedantic Expert', checkedOut:'Checked-Out Survivor', goldenRetriever:'Golden Retriever Colleague' };
+  var BEHAV  = { warmMentor:'Generous with advice. Allergic to unnecessary drama.', hypercompetent:'Strong help, limited patience.', overwhelmedKind:'Wants to help. Calendar says no.', boxTicker:'Follows the template. Judges yours.', gossipMagnet:'Socially available. Information hazard.', creditTaker:'Charming and slightly risky.', conflictAverse:'Accepts coffee. Avoids hard answers.', gatekeeper:'Cold at first. Valuable once won over.', politicalOperator:'Knows the hierarchy. Uses it.', pedanticExpert:'Technically flawless. Emotionally precise.', checkedOut:'Unreliable but occasionally funny.', goldenRetriever:'Likes you immediately. Effort cap applies.' };
+  function personaLabel(pid){ return LABELS[pid] || pid; }
+  function personaBehaviourLine(pid){ return BEHAV[pid] || ''; }
+
+  /* ── 4. ensure200 — assignment + personaMap + starting rapport (once) ── */
+  function ensure200(){
+    var s = S_(); if (!s) return;
+    // team / student personas
+    if (Array.isArray(s.team)) {
+      var used = [];
+      s.team.forEach(function(t){
+        if (!t) return;
+        if (!t.personaId) {
+          var pool = t.student ? 'student' : 'team';
+          var cand = assignPersona(pool);
+          if (used.filter(function(x){ return x === cand; }).length >= 2) cand = assignPersona(pool); // one re-roll
+          t.personaId = cand;
+        }
+        used.push(t.personaId);
+        if (!t._fa200rap && num(t.rel)) {
+          var p = PERSONAS[t.personaId];
+          if (p) t.rel = clmp(t.rel + (p.rapportMod||0), 0, 10);
+          t._fa200rap = true;
+        }
+      });
+    }
+    // chain personaMap
+    if (!s.personaMap) s.personaMap = {};
+    [['manager','manager'],['director','senior'],['dg','senior'],['adm','senior'],['dm','senior']].forEach(function(pair){
+      if (!s.personaMap[pair[0]]) s.personaMap[pair[0]] = assignPersona(pair[1]);
+    });
+    // chain starting rapport (once, only when the rels actually exist)
+    if (!s._fa200chainRap && num(s.manager) && s.peopleRel && num(s.peopleRel.director)) {
+      s._fa200chainRap = true;
+      var ap = function(role, get, set){ var pid=s.personaMap[role], p=pid?PERSONAS[pid]:null; if(!p)return; var v=get(); if(num(v)) set(clmp(v+(p.rapportMod||0),0,10)); };
+      ap('manager',  function(){return s.manager;},          function(v){ s.manager=v; });
+      ap('director', function(){return s.peopleRel.director;},function(v){ s.peopleRel.director=v; });
+      ap('dg',       function(){return s.peopleRel.dg;},      function(v){ s.peopleRel.dg=v; });
+      ap('adm',      function(){return s.peopleRel.adm;},     function(v){ s.peopleRel.adm=v; });
+      ap('dm',       function(){return s.peopleRel.dm;},      function(v){ s.peopleRel.dm=v; });
+    }
+    if (!Array.isArray(s.contactList)) s.contactList = [];
+  }
+
+  /* ── 5. persona lookups ───────────────────────────────── */
+  function personaFor(p){
+    if (!p) return null;
+    var s = S_(); if (!s) return null;
+    if (p.kind === 'team' && Array.isArray(s.team)) {
+      var t = s.team.find(function(x){ return String(x.id) === String(p.id); });
+      if (t && t.personaId) return PERSONAS[t.personaId] || null;
+      return null;
+    }
+    var key = (p.id === 'manager') ? 'manager'
+            : (p.id === 'director') ? 'director'
+            : (p.id === 'dg')       ? 'dg'
+            : (p.id === 'adm')      ? 'adm'
+            : (p.id === 'dm')       ? 'dm' : null;
+    if (key && s.personaMap && s.personaMap[key]) return PERSONAS[s.personaMap[key]] || null;
+    return null;
+  }
+  function personaForRole(roleKey){ var s=S_(); if(!s||!s.personaMap)return null; var pid=s.personaMap[roleKey]; return pid?(PERSONAS[pid]||null):null; }
+
+  /* ── 10. approval modifier (clamped ±0.15; role still dominates) ── */
+  function approvalModifier(persona){
+    if (!persona) return 0;
+    var mod = persona.approvalMod || 0;
+    if (persona.approvalSwing) mod += (Math.random() - 0.5) * 0.20;
+    return clmp(mod, -0.15, 0.15);
+  }
+
+  /* ── hook helpers: capture current globals ──────────────── */
+  var PREV = {
+    branchAct:   (typeof G.branchAct   === 'function') ? G.branchAct   : null,
+    doWork:      (typeof G.doWork       === 'function') ? G.doWork      : null,
+    spend:       (typeof G.spend        === 'function') ? G.spend       : null,
+    renderPerson:(typeof G.renderPerson === 'function') ? G.renderPerson: null,
+    render:      (typeof G.render        === 'function') ? G.render      : null,
+    start:       (typeof G.start         === 'function') ? G.start       : null,
+    boot:        (typeof G.boot          === 'function') ? G.boot        : null,
+    processBank: (typeof G.processBank   === 'function') ? G.processBank : null
+  };
+  function callPerson(id){ try { return (typeof G.person === 'function') ? G.person(id) : null; } catch(e){ return null; } }
+
+  /* ── 7+8. Coffee: persona acceptance + golden-retriever bonus ──
+     coffeeAcc is applied by shifting ONLY the first Math.random draw
+     inside the existing branchAct (the acceptance roll), then restoring
+     immediately — so all existing leave/HR/gossip/senior logic is intact. */
+  if (PREV.branchAct) {
+    G.branchAct = function branchAct_fa200(arg){
+      var s = S_();
+      var parts = String(arg||'').split(':'), kind = parts[0], id = parts[1];
+      var p = callPerson(id);
+      var persona = p ? personaFor(p) : null;
+      if (!s || !persona || !/^(coffee|advice|teams)$/.test(kind)) {
+        return PREV.branchAct.apply(this, arguments);
+      }
+      var relBefore = num(p.rel) ? p.rel : null;
+      var acc = persona.coffeeAcc || 0;
+      var out;
+      if (acc) {
+        var orig = Math.random, first = true;
+        Math.random = function(){ var r = orig.call(Math); if (first) { first = false; return Math.max(0, Math.min(0.999999, r - acc)); } return r; };
+        try { out = PREV.branchAct.apply(this, arguments); }
+        finally { Math.random = orig; }
+      } else {
+        out = PREV.branchAct.apply(this, arguments);
+      }
+      // post-hoc: golden-retriever extra motivation on a successful coffee/advice
+      try {
+        if (persona.coffeeMotGain && relBefore !== null) {
+          var pAfter = callPerson(id);
+          if (pAfter && num(pAfter.rel) && pAfter.rel > relBefore + 0.01 && typeof G.changeMot === 'function') {
+            G.changeMot(1);
+          }
+        }
+      } catch(e){}
+      return out;
+    };
+  }
+
+  /* ── 10. Approval: nudge the sign-off threshold by the approver's persona ── */
+  if (PREV.doWork) {
+    G.doWork = function doWork_fa200(task, tier){
+      var mod = 0, idx = -1;
+      try {
+        if (task && typeof THRESH !== 'undefined' && Array.isArray(THRESH)) {
+          var sign = num(task.sign) ? task.sign : 1;
+          idx = sign - 1;
+          if (idx >= 0 && idx < THRESH.length) {
+            var roleKey = ['manager','director','dg','adm','dm'][idx] || 'manager';
+            mod = approvalModifier(personaForRole(roleKey));
+          } else { idx = -1; }
+        }
+      } catch(e){ idx = -1; }
+      if (idx >= 0 && mod) {
+        var origT = THRESH[idx];
+        THRESH[idx] = clmp(origT - mod, 0.05, 0.99); // +mod (generous) -> lower threshold -> easier
+        try { return PREV.doWork.apply(this, arguments); }
+        finally { THRESH[idx] = origT; }
+      }
+      return PREV.doWork.apply(this, arguments);
+    };
+  }
+
+  /* ── 11. Focus fatigue: every 3 cumulative Focus → −1 Energy.
+     Hooked in spend() (the sole focus gate for non-work actions).
+     Work tasks spend focus directly (bypass spend) and keep their own
+     energy cost, so there is no double-drain. */
+  if (PREV.spend) {
+    G.spend = function spend_fa200(n){
+      var s = S_();
+      var before = (s && num(s.focusSpent)) ? s.focusSpent : 0;
+      var r = PREV.spend.apply(this, arguments);   // base: focusSpent += n; if n>=3 changeMot(-1)
+      try {
+        var after = (s && num(s.focusSpent)) ? s.focusSpent : before;
+        var drain = 0;
+        [3,6,9,12].forEach(function(t){ if (before < t && after >= t) drain++; });
+        if (drain > 0 && typeof G.changeEnergy === 'function') G.changeEnergy(-drain);
+      } catch(e){}
+      return r;
+    };
+  }
+
+  /* ── 14. renderPerson — persona chip ─────────────────────── */
+  if (PREV.renderPerson) {
+    G.renderPerson = function renderPerson_fa200(id){
+      var out = PREV.renderPerson.apply(this, arguments);
+      try {
+        var p = callPerson(id); if (!p) return out;
+        var persona = personaFor(p); if (!persona) return out;
+        var view = document.getElementById('view'); if (!view) return out;
+        if (view.querySelector('.fa200PersonaLine')) return out;
+        var panel = view.querySelector('.flavour'); if (!panel) return out;
+        var esc = (typeof G.esc === 'function') ? G.esc : function(x){ return String(x==null?'':x).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); };
+        var chip = '<div class="fa200PersonaLine" style="font-size:14px;color:var(--paper,#a8b8c8);margin:5px 0 6px;line-height:1.3;">' +
+                   '<span class="chip new">' + esc(personaLabel(persona.id)) + '</span> ' +
+                   esc(personaBehaviourLine(persona.id)) + '</div>';
+        panel.insertAdjacentHTML('afterend', chip);
+      } catch(e){}
+      return out;
+    };
+  }
+
+  /* ── state-init hooks (ensure200 is idempotent + guarded) ─── */
+  function tickEnsure(){ try { if (S_()) ensure200(); } catch(e){} }
+  if (PREV.render)      G.render      = function render_fa200(){      tickEnsure(); return PREV.render.apply(this, arguments); };
+  if (PREV.start)       G.start       = function start_fa200(){       var r = PREV.start.apply(this, arguments);       tickEnsure(); return r; };
+  if (PREV.boot)        G.boot        = function boot_fa200(){        var r = PREV.boot.apply(this, arguments);        tickEnsure(); return r; };
+  if (PREV.processBank) G.processBank = function processBank_fa200(){ var r = PREV.processBank.apply(this, arguments); tickEnsure(); return r; };
+  tickEnsure();  // in case a game is already in progress
+
+  /* ── testing hook ─────────────────────────────────────── */
+  G.FA200TEST = function(){
+    var s = S_(), res = {};
+    try {
+      ensure200();
+      res.teamHavePersona = Array.isArray(s.team) ? s.team.every(function(t){ return !!t.personaId; }) : 'no team';
+      res.personaMap = s.personaMap ? Object.keys(s.personaMap).sort().join(',') : null;
+      res.approvalClampOK = (approvalModifier(PERSONAS.pedanticExpert) <= 0.15) && (approvalModifier(PERSONAS.warmMentor) >= -0.15);
+      res.personas = Object.keys(PERSONAS).length;
+      return res;
+    } catch(e){ res.error = String(e && e.stack || e); return res; }
+  };
+  G.__FA200 = { PERSONAS:PERSONAS, POOLS:POOLS, ensure200:ensure200, personaFor:personaFor, personaForRole:personaForRole, approvalModifier:approvalModifier, assignPersona:assignPersona, personaLabel:personaLabel, personaBehaviourLine:personaBehaviourLine };
+
+})(window);
+
+</script>
 </body>
 </html>
