@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fearless Advice: Year 1 · v0.22.7</title>
+<title>Fearless Advice: Year 1 · v0.22.8</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jersey+20&display=swap" rel="stylesheet">
@@ -7759,7 +7759,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   /* ---------------- IT tab button + ASCme wiki injection ---------------- */
   function ensureITTab(){ try{ var s=S_(); var tabs=byId('tabs'); if(!tabs)return; var existing=tabs.querySelector('[data-arg="it"]'); var ascme=tabs.querySelector('[data-arg="ascme"]'); if(!existing){ var html='<button class="tab" data-act="tab" data-arg="it">🛠️ IT</button>'; if(ascme)ascme.insertAdjacentHTML('beforebegin',html); else tabs.insertAdjacentHTML('beforeend',html); existing=tabs.querySelector('[data-arg="it"]'); } if(s){ if(s.tab==='it'){ Array.prototype.forEach.call(tabs.querySelectorAll('.tab'),function(b){b.classList.remove('active');}); if(existing)existing.classList.add('active'); } else if(existing){ existing.classList.remove('active'); } } }catch(e){} }
   function itWikiHTML(){ return '<h3>🛠️ IT · Service Desk &amp; Asset Management</h3><p>The <b>IT tab</b> sits just before ASCme because help should be reachable before you give up. It is where focus turns into hardware, software, and the occasional reduction in risk.</p><div class="fa1312cCallout">Everything here costs focus and most of it costs patience. The Service Desk is real, helpful, and chronically between meetings.</div><p><b>What you can request:</b></p><ul><li><b>Create an Inbox Rule</b> — deflects Spam-tagged mail for the year. Three tickets, one Teams call, no further discussion.</li><li><b>Tablet → Laptop</b> — all tasks cost 1 less effort. The laptop arrives next period.</li><li><b>Second Monitor</b> — focus ceiling +1 per period. Needs a family doctor and a visit this period (both via the Personal tab).</li><li><b>Copilot Plus</b> — French translation +15%. Wrong 27% of the time, confidently.</li><li><b>Enable 24A</b> — fewer sensitive-material incidents. Always available.</li></ul><p>The process is the process. The process is also the point.</p>'; }
-  function injectITWiki(){ try{ var s=S_(); var v=byId('view'); if(!v)return; try{ var _h2=v.querySelector('h2'); if(_h2&&/ASCme/.test(_h2.textContent||'')){ _h2.textContent="\ud83c\udfe2 ASCme | 'ASC and you may receive in 2-3 business days, excluding holidays'"; } }catch(e){} var tabsC=v.querySelector('.fa1312cTopicTabs')||v.querySelector('.fa1311Tabs')||v.querySelector('.fa1310Tabs'); if(!tabsC)return; if(!tabsC.querySelector('[data-act="fa14ITWiki"]')){ var cls='fa1312cTopicBtn fa1311Topic fa1310Topic fa14ITTopic'; tabsC.insertAdjacentHTML('beforeend','<button class="'+cls+'" data-act="fa14ITWiki">🛠️ IT</button>'); } var chip=tabsC.querySelector('[data-act="fa14ITWiki"]'); if(s&&s.it&&s.it._wiki){ Array.prototype.forEach.call(tabsC.querySelectorAll('button'),function(b){b.classList.remove('active');}); if(chip)chip.classList.add('active'); var art=v.querySelector('.fa1312cArticle')||v.querySelector('.fa1311Article')||v.querySelector('.fa1310Article')||v.querySelector('article'); if(art)art.innerHTML=itWikiHTML(); var subs=v.querySelector('.fa1312cSubTabs')||v.querySelector('.fa1311Subtabs'); if(subs)subs.innerHTML=''; } else if(chip){ chip.classList.remove('active'); } }catch(e){} 
+  function injectITWiki(){ try{ var s=S_(); var v=byId('view'); if(!v)return; try{ var _h2=v.querySelector('h2'); if(_h2&&/ASCme/.test(_h2.textContent||'')){ _h2.textContent="\ud83c\udfe2 ASCme | 'ASC and you may receive in 2-3 business days, excluding holidays'"; } }catch(e){} var tabsC=v.querySelector('.fa1312cTopicTabs')||v.querySelector('.fa1311Tabs')||v.querySelector('.fa1310Tabs'); if(!tabsC)return; if(!tabsC.querySelector('[data-act="fa14ITWiki"]')){ var cls='fa1312cTopicBtn fa1311Topic fa1310Topic fa14ITTopic'; tabsC.insertAdjacentHTML('beforeend','<button class="'+cls+'" data-act="fa14ITWiki">🛠️ IT</button>'); } var chip=tabsC.querySelector('[data-act="fa14ITWiki"]'); if(s&&s.it&&s.it._wiki){ Array.prototype.forEach.call(tabsC.querySelectorAll('button'),function(b){b.classList.remove('active');}); if(chip)chip.classList.add('active'); var art=v.querySelector('.fa1312cArticle')||v.querySelector('.fa1311Article')||v.querySelector('.fa1310Article')||v.querySelector('article'); if(art)art.innerHTML=itWikiHTML(); var subs=v.querySelector('.fa1312cSubTabs')||v.querySelector('.fa1311Subtabs'); if(subs)subs.innerHTML=''; } else if(chip){ chip.classList.remove('active'); } }catch(e){} }
   /* ---------------- effect hooks ---------------- */
   function applyInboxRuleDeflect(){ var s=S_(); if(!s||!s.it||!s.it.inboxRule||!s.tasks)return; var before=s.tasks.length; s.tasks=s.tasks.filter(function(t){ if(t.status==='done'||t.dead)return true; if(t.kind==='minoPrelim'||t.kind==='minoRequest'||t.kind==='minoProB')return true; var hay=((t.title||'')+' '+(t.flavour||'')+' '+(t.kind||'')).toLowerCase(); var spammy=t.spam===true||/\b(spam|lottery|prince|gift\s*card|crypto|inheritance|wire transfer|nigerian|free vacation|miracle)\b/.test(hay); if(spammy)return false; return true; }); var removed=before-s.tasks.length; if(removed>0)s.it.deflected=(s.it.deflected||0)+removed; }
   function apply24A(){ var s=S_(); if(!s||!s.it||!s.it.email24A)return; try{ var sec=s.fa1311&&s.fa1311.security; if(sec){ sec.documentRisk=Math.max(0,(sec.documentRisk||0)-2); sec.securityRisk=Math.max(0,(sec.securityRisk||0)-1); } }catch(e){} }
@@ -8122,7 +8122,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
     return res;
   }catch(e){ res.error=String(e&&e.stack||e); return res; } };
 
-  /* v0.22.7 debug fix: the MINO submit auto-move lives in a separate <script>
+  /* v0.22.8 debug fix: the MINO submit auto-move lives in a separate <script>
      block and could not see these IIFE-private definitions, so it silently did
      nothing. Expose them (read-only data) so the auto-move actually runs. */
   try{ if(typeof window!=='undefined'){ if(!window.DK)window.DK=DK; if(!window.DOCMETA)window.DOCMETA=DOCMETA; } }catch(e){}
@@ -12734,7 +12734,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   G.FA0221_DECORATE=decorate;
   G.FA0222_DECORATE=decorate;
   function runTest(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       installStateBridge();
       if(!localS()||localS().mode==='title'){try{if(typeof start==='function')start();}catch(e){}}
@@ -12837,10 +12837,10 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   try{ spend=spend023; G.spend=spend; }catch(e){}
 
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.7'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
-        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.7'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
+        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.8'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
       });
     }catch(e){}
   }
@@ -12985,12 +12985,12 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   document.addEventListener('keydown',function(ev){
     try{ if(ev.key==='Escape' && by('faSafeTutRoot')) setTimeout(suppressTutSupplement,0); }catch(e){}
   },true);
-  // v0.22.7: legacy body-wide observer/interval disabled. Later layers maintain
+  // v0.22.8: legacy body-wide observer/interval disabled. Later layers maintain
   // credit, Focus text, and tutorial suppression without mutating on every DOM change.
   G.__FA0223_LEGACY_OBSERVER_DISABLED=true;
 
   G.FA0223_TEST=function(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       if(typeof boot==='function') boot();
       injectCredit();
@@ -13177,10 +13177,10 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.7'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
-        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.7'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
+        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.8'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
       });
     }catch(e){}
   }
@@ -13276,7 +13276,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
           var over=pre.focus > pre.max;
           var newOver=over ? Math.min(10, pre.overwhelm+1) : 0;
           var base=clampLocal(pre.energy + (pre.rest?4:0),0,12);
-          /* v0.22.7: Energy carries over between periods. The previous period's
+          /* v0.22.8: Energy carries over between periods. The previous period's
              ending Energy becomes the next period's starting Energy. There is no
              automatic per-period recovery; only deliberate player actions (log off
              early +4, coffee, personal day, vacation, sick day) restore Energy.
@@ -13354,7 +13354,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0224_TEST=function(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       if(typeof boot==='function') boot();
       ensureTitleCredit(); scheduleMaintain();
@@ -13410,11 +13410,11 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   function S_(){ try{ return (typeof S!=='undefined' && S) ? S : (G.S||null); }catch(e){ return G.S||null; } }
   function setS(v){ try{ S=v; }catch(e){} try{ G.S=v; }catch(e){} return v; }
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.7'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
         if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){
-          var next='Year 1 · v0.22.7';
+          var next='Year 1 · v0.22.8';
           if((el.textContent||'')!==next) el.textContent=next;
         }
       });
@@ -13587,7 +13587,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0225_TEST=function(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       if(typeof boot==='function') boot();
       res.titleHasStart=!!document.querySelector('[data-act="start"]');
@@ -13644,11 +13644,11 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   function isItIntro(title,body,type){ return IT_INTRO_RE.test([title,body,type].map(txt).join(' ')); }
 
   function stamp226(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.7'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
     try{
       qsa('.tag').forEach(function(el){
         if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){
-          var next='Year 1 · v0.22.7';
+          var next='Year 1 · v0.22.8';
           if((el.textContent||'')!==next) el.textContent=next;
         }
       });
@@ -13803,7 +13803,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0226_TEST=function(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       if(typeof boot==='function') boot();
       postClean();
@@ -13851,13 +13851,13 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   if(G.FA0227_START_CREDIT_STABILITY) return;
   G.FA0227_START_CREDIT_STABILITY=true;
   var CREDIT='Lovingly vibecoded by Sancho Angulo in his off time.';
-  var VERSION='Year 1 · v0.22.7';
+  var VERSION='Year 1 · v0.22.8';
   function by(id){return document.getElementById(id);}
   function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
   function S_(){try{return (typeof S!=='undefined'&&S)?S:(G.S||null);}catch(e){return G.S||null;}}
   function setS(v){try{S=v;}catch(e){} try{G.S=v;}catch(e){} return v;}
   function stamp(){
-    try{document.title='Fearless Advice: Year 1 · v0.22.7';}catch(e){}
+    try{document.title='Fearless Advice: Year 1 · v0.22.8';}catch(e){}
     try{qsa('.tag').forEach(function(el){ if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')) el.textContent=VERSION; });}catch(e){}
   }
   function singleCredit(){
@@ -13973,7 +13973,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
     r7.__fa0227PersonaWrapped=true; try{render=r7;G.render=render;}catch(e){}
   }
   G.FA0227_TEST=function(){
-    var res={version:'v0.22.7'};
+    var res={version:'v0.22.8'};
     try{
       if(typeof boot==='function') boot(); cleanTitle();
       res.startButton=!!document.querySelector('[data-act="start"]');
