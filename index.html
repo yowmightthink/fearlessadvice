@@ -3101,7 +3101,7 @@ function resolveLanguageTests(){
     const top=document.getElementById('fa12Topper'); if(top)top.style.display='none';
     const flag=(typeof fa12FlagMarkup==='function')?fa12FlagMarkup():'';
     const v=$('view');
-    if(v)v.innerHTML=`<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" data-act="start">Start</button></div>`;
+    if(v)v.innerHTML=`<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix</div><p>A desk. A manager. An inbox that refills like a curse. Your division's job is convincing the federal government to release land it has owned since Confederation and is emotionally attached to. Your pension arrives in 35 years, Phoenix will sort out your pay at some point, and if anything goes sideways — there's a form for that. <br><b>Welcome to the public service.</b></p><button class="start" data-act="start">Start</button></div>`;
   }
   boot=function(){hardTitle();};
   start=function(){const out=PREV.start?PREV.start():undefined; stabilizeAdmin(S); return out;};
@@ -3242,7 +3242,7 @@ function resolveLanguageTests(){
   };
   function titleMarkup(){
     const flag=(typeof fa12FlagMarkup==='function')?fa12FlagMarkup():'';
-    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix 3</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" data-act="start">Start</button></div>`;
+    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix 3</div><p>A desk. A manager. An inbox that refills like a curse. Your division's job is convincing the federal government to release land it has owned since Confederation and is emotionally attached to. Your pension arrives in 35 years, Phoenix will sort out your pay at some point, and if anything goes sideways — there's a form for that. <br><b>Welcome to the public service.</b></p><button class="start" data-act="start">Start</button></div>`;
   }
   function hardReset(){
     if(typeof newState==='function')S=newState();
@@ -3563,7 +3563,7 @@ function resolveLanguageTests(){
     if(t && /Approved at/i.test(t.textContent||''))t.textContent=(t.textContent||'').replace(/Approved at/g,'Approved by');
   }
   function titleHTML(){
-    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flagMarkup()}</div><div class="tag">Year 1 · v0.13.6</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" type="button" data-act="start">Start</button></div>`;
+    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flagMarkup()}</div><div class="tag">Year 1 · v0.13.6</div><p>A desk. A manager. An inbox that refills like a curse. Your division's job is convincing the federal government to release land it has owned since Confederation and is emotionally attached to. Your pension arrives in 35 years, Phoenix will sort out your pay at some point, and if anything goes sideways — there's a form for that. <br><b>Welcome to the public service.</b></p><button class="start" type="button" data-act="start">Start</button></div>`;
   }
   function ensureCoreNodes(){
     const screen=byId('screen'); if(!screen)return;
@@ -5683,6 +5683,7 @@ function show(id){oldKill();const sc=MAP[id]||MAP.intro1;ST.current=sc.id;if(sc.
 function go(id){ST.stack=ST.stack||[];if(ST.stack[ST.stack.length-1]!==id)ST.stack.push(id);show(id)}
 function back(){ST.stack=ST.stack||[];if(ST.stack.length>1){ST.stack.pop();show(ST.stack[ST.stack.length-1])}}
 function launch(){const s=getS();if(ST.active||!s||s.mode==='title')return;ST.snapshot=snapshot();ST.active=true;ST.stack=[];oldKill();go('intro1')}
+window.__FA_TUT_LAUNCH__=launch;
 function key(ev){if(!root())return;if(ev.key==='Escape'){ev.preventDefault();close();return}if(ST.typing&&(ev.key===' '||ev.key==='Enter')){ev.preventDefault();reveal()}}
 if(!document.__FA_SAFE_TUTORIAL_KEYS__){document.addEventListener('keydown',key,true);document.__FA_SAFE_TUTORIAL_KEYS__=true}
 start=function(){const out=PREV.start?PREV.start():undefined;setTimeout(()=>{try{launch()}catch(e){}},80);return out};
@@ -13930,7 +13931,9 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
       try{ if(typeof renderInbox==='function') renderInbox(); }catch(_e2){}
     }
     stamp(); decorateMissingPersona();
-    return !!(S_() && S_().mode!=='title' && Array.isArray(S_().tasks) && S_().tasks.length>0);
+    var _dsOk=!!(S_() && S_().mode!=='title' && Array.isArray(S_().tasks) && S_().tasks.length>0);
+    if(_dsOk) setTimeout(function(){ try{ if(typeof window.__FA_TUT_LAUNCH__==='function') window.__FA_TUT_LAUNCH__(); }catch(_e){} },80);
+    return _dsOk;
   }
   var prevAct=(typeof act==='function')?act:null;
   if(prevAct && !prevAct.__fa0227Wrapped){
@@ -13992,171 +13995,5 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
 })(window);
 </script>
 
-<style id="fa0229-tutorial-launch-fix-style">
-  /* Tutorial launch fix - no visual changes */
-</style>
-<script id="fa0229-tutorial-launch-fix">
-/* Fearless Advice v0.22.9 — Tutorial Launch Fix (FA0229) */
-;(function(G){
-  'use strict';
-  if (G.FA0229_TUTORIAL_LAUNCH_FIX) return;
-  G.FA0229_TUTORIAL_LAUNCH_FIX = true;
-
-  function S_() {
-    try { return (typeof S !== 'undefined' && S) ? S : (G.S || null); }
-    catch(e) { return G.S || null; }
-  }
-
-  function gameIsPlaying() {
-    try {
-      var s = S_();
-      if (!s || s.mode === 'title' || s.mode == null) return false;
-      if (!Array.isArray(s.tasks) || s.tasks.length === 0) return false;
-      var status = document.getElementById('status');
-      if (status && status.style.display === 'none') return false;
-      return true;
-    } catch(e) { return false; }
-  }
-
-  function tutorialAlreadyShown() {
-    /* True if the tutorial overlay is open, or was dismissed this session */
-    if (document.getElementById('faSafeTutRoot')) return true;
-    try {
-      var s = S_();
-      if (s && s.flags && s.flags.tutorialDismissed) return true;
-    } catch(e) {}
-    return false;
-  }
-
-  function safeCopy(obj) {
-    try { return JSON.parse(JSON.stringify(obj)); } catch(e) { return null; }
-  }
-
-  function ensureTutorialFires() {
-    setTimeout(function() {
-      try {
-        /* Nothing to do if tutorial is already showing or game hasn't started */
-        if (tutorialAlreadyShown()) return;
-        if (!gameIsPlaying()) return;
-
-        var s = S_();
-        if (!s) return;
-
-        /* Snapshot full game state so we can restore it after calling start() */
-        var snapshot = safeCopy(s);
-        if (!snapshot) return;
-
-        /* Capture real functions before temporarily overriding them */
-        var origNewState  = (typeof newState  === 'function') ? newState  : null;
-        var origInitTasks = (typeof initTasks === 'function') ? initTasks : null;
-        var origRender    = (typeof render    === 'function') ? render    : null;
-
-        if (!origNewState) return; /* safety: can't proceed without newState */
-
-        /*
-         * Override newState() -> returns the snapshot (no state wipe).
-         * Override initTasks() -> no-op (no task list reset).
-         * Override render()    -> no-op (no inbox flash during the call).
-         * Then call start() — this runs the full chain, including the
-         * tutorial's start wrapper which queues setTimeout(launch, 80).
-         */
-        try { window.newState  = function() { return snapshot; }; } catch(e) { return; }
-        try { if (origInitTasks) window.initTasks = function() {}; } catch(e) {}
-        try { if (origRender)    window.render    = function() {}; } catch(e) {}
-
-        var called = false;
-        try {
-          if (typeof start === 'function') { start(); called = true; }
-        } catch(e) {}
-
-        /* Restore all overridden functions immediately after the synchronous call */
-        try { window.newState  = origNewState;  } catch(e) {}
-        try { if (origInitTasks) window.initTasks = origInitTasks; } catch(e) {}
-        try { if (origRender)    window.render    = origRender;    } catch(e) {}
-
-        if (!called) return;
-
-        /* Restore S to our snapshot (start() may have mutated it) */
-        try {
-          if (typeof S !== 'undefined') S = snapshot;
-          G.S = snapshot;
-        } catch(e) {}
-
-        /*
-         * 200ms later (after the tutorial's 80ms launch timeout has fired):
-         * ensure S is still our snapshot, and if the tutorial didn't appear
-         * for some reason, call render() to restore the correct game view.
-         */
-        setTimeout(function() {
-          try {
-            var cur = S_();
-            if (!cur || cur.mode === 'title') {
-              try {
-                if (typeof S !== 'undefined') S = snapshot;
-                G.S = snapshot;
-              } catch(e2) {}
-            }
-            if (!document.getElementById('faSafeTutRoot')) {
-              try { if (typeof render === 'function') render(); } catch(e) {}
-            }
-          } catch(e) {}
-        }, 200);
-
-      } catch(e) {}
-    }, 300); /* 300ms: enough time for start() + any existing queued timeouts to settle */
-  }
-
-  /*
-   * Wrap start() so that every call (via button click, act('start'), or any
-   * other trigger) goes through ensureTutorialFires() afterwards.
-   */
-  var _prevStart = (typeof start === 'function') ? start : null;
-  if (_prevStart && !_prevStart.__fa0229Wrapped) {
-    var _wrappedStart = function start_fa0229() {
-      var out;
-      try { out = _prevStart.apply(this, arguments); } catch(e) { throw e; }
-      ensureTutorialFires();
-      return out;
-    };
-    _wrappedStart.__fa0229Wrapped = true;
-    try { start = _wrappedStart; G.start = _wrappedStart; } catch(e) {}
-  }
-
-  /*
-   * Also wrap act() to catch act('start') calls.
-   * v0.22.5 intercepts act('start') and routes it to robustStart()
-   * WITHOUT going through the start() wrapper above — so we need this
-   * second hook to cover that path too.
-   */
-  var _prevAct = (typeof act === 'function') ? act : null;
-  if (_prevAct && !_prevAct.__fa0229Wrapped) {
-    var _wrappedAct = function act_fa0229(a, arg) {
-      var out;
-      try { out = _prevAct.apply(this, arguments); } catch(e) { throw e; }
-      if (a === 'start') ensureTutorialFires();
-      return out;
-    };
-    _wrappedAct.__fa0229Wrapped = true;
-    try { act = _wrappedAct; G.act = _wrappedAct; } catch(e) {}
-  }
-
-  /* Test hook: run FA0229_TEST() in the browser console to verify the patch */
-  G.FA0229_TEST = function() {
-    var res = { version: 'v0.22.9-tutorial-launch-fix', patch: 'FA0229' };
-    try {
-      res.patchActive      = !!G.FA0229_TUTORIAL_LAUNCH_FIX;
-      res.startWrapped     = typeof start === 'function' && !!start.__fa0229Wrapped;
-      res.actWrapped       = typeof act   === 'function' && !!act.__fa0229Wrapped;
-      res.gameIsPlaying    = gameIsPlaying();
-      res.tutorialShown    = tutorialAlreadyShown();
-      res.tutRootExists    = !!document.getElementById('faSafeTutRoot');
-      res.newStateFunction = typeof newState === 'function';
-      res.ok = res.patchActive && res.startWrapped && res.actWrapped;
-    } catch(e) { res.error = String(e && e.stack || e); }
-    return res;
-  };
-
-})(window);
-</script>
 </body>
 </html>
