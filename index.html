@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fearless Advice: Year 1 · v0.22.8</title>
+<title>Fearless Advice: Year 1 · v0.22.9</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jersey+20&display=swap" rel="stylesheet">
@@ -3101,7 +3101,7 @@ function resolveLanguageTests(){
     const top=document.getElementById('fa12Topper'); if(top)top.style.display='none';
     const flag=(typeof fa12FlagMarkup==='function')?fa12FlagMarkup():'';
     const v=$('view');
-    if(v)v.innerHTML=`<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix</div><p>You are 22, newly bridged as an EC-02 in Asset Transfer and Disposal. Ottawa offers pay periods, weather, GEDS, Phoenix, coffee diplomacy, language profiles, and the kind of inbox that grows back when ignored.</p><button class="start" data-act="start">Start</button></div>`;
+    if(v)v.innerHTML=`<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" data-act="start">Start</button></div>`;
   }
   boot=function(){hardTitle();};
   start=function(){const out=PREV.start?PREV.start():undefined; stabilizeAdmin(S); return out;};
@@ -3242,7 +3242,7 @@ function resolveLanguageTests(){
   };
   function titleMarkup(){
     const flag=(typeof fa12FlagMarkup==='function')?fa12FlagMarkup():'';
-    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix 3</div><p>You are 22, newly bridged as an EC-02 in Asset Transfer and Disposal. Ottawa offers pay periods, weather, GEDS, Phoenix, coffee diplomacy, language profiles, and the kind of inbox that grows back when ignored.</p><button class="start" data-act="start">Start</button></div>`;
+    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flag}</div><div class="tag">Year 1 · v0.13.5 hotfix 3</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" data-act="start">Start</button></div>`;
   }
   function hardReset(){
     if(typeof newState==='function')S=newState();
@@ -3563,7 +3563,7 @@ function resolveLanguageTests(){
     if(t && /Approved at/i.test(t.textContent||''))t.textContent=(t.textContent||'').replace(/Approved at/g,'Approved by');
   }
   function titleHTML(){
-    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flagMarkup()}</div><div class="tag">Year 1 · v0.13.6</div><p>You are 22, newly bridged as an EC-02 in Asset Transfer and Disposal. Ottawa offers pay periods, weather, GEDS, Phoenix, coffee diplomacy, language profiles, and an inbox that grows back like a policy weed.</p><button class="start" type="button" data-act="start">Start</button></div>`;
+    return `<div class="title"><div class="fa11Logo"><span class="fa11Word">Fearless<br>Advice</span>${flagMarkup()}</div><div class="tag">Year 1 · v0.13.6</div><p>You have a pension coming in 35 years, if all goes well. For now, you work in a division whose entire job is convincing the federal government to let go of property it's owned since Confederation. Your inbox is not attached to anything. It just refills.<br> Welcome to the public service: you will be fine, probably. And if not, there is a form for that too.</p><button class="start" type="button" data-act="start">Start</button></div>`;
   }
   function ensureCoreNodes(){
     const screen=byId('screen'); if(!screen)return;
@@ -5675,7 +5675,7 @@ function posToast(sc,z){const t=byId('faSafeTutToast');if(!t)return;const s=scre
 function arrow(sc,z){const svg=byId('faSafeTutArrow'),toast=byId('faSafeTutToast');if(!svg||!toast||!z)return;svg.innerHTML='';const tr=rect(toast);if(!tr)return;const NS='http://www.w3.org/2000/svg';const tcx=tr.left+tr.width/2,tcy=tr.top+tr.height/2;let sx,sy,ex,ey,dir;if(tr.top>=z.bottom-2){dir='up';ex=z.cx;ey=z.bottom;sx=tcx;sy=tr.top;}else if(tr.bottom<=z.top+2){dir='down';ex=z.cx;ey=z.top;sx=tcx;sy=tr.bottom;}else if(tr.left>=z.right-2){dir='left';ex=z.right;ey=z.cy;sx=tr.left;sy=tcy;}else{dir='right';ex=z.left;ey=z.cy;sx=tr.right;sy=tcy;}let pts;if(dir==='up'||dir==='down'){const my=(sy+ey)/2;pts=sx+','+sy+' '+sx+','+my+' '+ex+','+my+' '+ex+','+ey;}else{const mx=(sx+ex)/2;pts=sx+','+sy+' '+mx+','+sy+' '+mx+','+ey+' '+ex+','+ey;}const line=document.createElementNS(NS,'polyline');line.setAttribute('class','line');line.setAttribute('points',pts);svg.appendChild(line);let hp;if(dir==='up')hp=(ex-7)+','+(ey+7)+' '+ex+','+ey+' '+(ex+7)+','+(ey+7);else if(dir==='down')hp=(ex-7)+','+(ey-7)+' '+ex+','+ey+' '+(ex+7)+','+(ey-7);else if(dir==='left')hp=(ex+7)+','+(ey-7)+' '+ex+','+ey+' '+(ex+7)+','+(ey+7);else hp=(ex-7)+','+(ey-7)+' '+ex+','+ey+' '+(ex-7)+','+(ey+7);const head=document.createElementNS(NS,'polyline');head.setAttribute('class','head');head.setAttribute('points',hp);svg.appendChild(head)}
 function apply(sc){clearVisuals();if(sc.phase!=='tour')return;const el=target(sc.target),spot=byId('faSafeTutSpot');if(!el||!spot)return;try{el.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}const z=zone(sc,el);if(!z)return;spot.style.left=z.left+'px';spot.style.top=z.top+'px';spot.style.width=z.width+'px';spot.style.height=z.height+'px';spot.classList.add('active');labels(sc,el,z);requestAnimationFrame(()=>{posToast(sc,z);arrow(sc,z)})}
 function count(sc){const seq=SCENES.filter(x=>x.id!=='skip');const i=Math.max(0,seq.findIndex(x=>x.id===sc.id));return (i+1)+' / '+seq.length}
-function controls(sc){const n=byId('faSafeTutNext'),c=byId('faSafeTutChoices'),ctr=byId('faSafeTutCounter'),rv=byId('faSafeTutReveal'),bk=byId('faSafeTutBack');if(ctr)ctr.textContent='Tutorial '+count(sc);if(rv)rv.onclick=ev=>{ev.preventDefault();reveal()};if(bk){const canBack=!!(ST.stack&&ST.stack.length>1);bk.style.display=canBack?'':'none';bk.disabled=!canBack;bk.onclick=ev=>{ev.preventDefault();back()}}if(!n||!c)return;c.innerHTML='';if(sc.choices&&!ST.typing){n.style.display='none';if(rv)rv.style.display='none';sc.choices.forEach(ch=>{const b=document.createElement('button');b.textContent=ch.label;b.onclick=ev=>{ev.preventDefault();go(ch.next)};c.appendChild(b)})}else{n.style.display='';if(rv)rv.style.display=ST.typing?'':'none';n.textContent=sc.closeLabel||'Next →';n.disabled=ST.typing;n.onclick=ev=>{ev.preventDefault();if(ST.typing){reveal();return}if(sc.closeLabel||!sc.next)close();else go(sc.next)}}}
+function controls(sc){const n=byId('faSafeTutNext'),c=byId('faSafeTutChoices'),ctr=byId('faSafeTutCounter'),rv=byId('faSafeTutReveal'),bk=byId('faSafeTutBack');if(ctr)ctr.textContent='Tutorial '+count(sc);if(rv){rv.style.display='none';rv.onclick=null;}if(bk){const canBack=!!(ST.stack&&ST.stack.length>1);bk.style.display=canBack?'':'none';bk.disabled=!canBack;bk.onclick=ev=>{ev.preventDefault();back()}}if(!n||!c)return;c.innerHTML='';if(sc.choices&&!ST.typing){n.style.display='none';sc.choices.forEach(ch=>{const b=document.createElement('button');b.textContent=ch.label;b.onclick=ev=>{ev.preventDefault();go(ch.next)};c.appendChild(b)})}else{n.style.display='';n.disabled=false;if(ST.typing){n.textContent='Reveal';n.onclick=ev=>{ev.preventDefault();reveal()}}else{n.textContent=sc.closeLabel||'Next →';n.onclick=ev=>{ev.preventDefault();if(sc.closeLabel||!sc.next)close();else go(sc.next)}}}}
 function toks(text){const out=[];String(text||'').split('\n').forEach((line,i,arr)=>{if(/^\[(pause|beat)\b/i.test(line.trim()))out.push({delay:600});out.push({text:line+(i<arr.length-1?'\n':'')})});return out}
 function typeText(text){clearTimer();ST.typing=true;ST.full=text;ST.queue=toks(text);const el=byId('faSafeTutText');if(el)el.textContent='';controls(MAP[ST.current]);let full='';function step(){if(!ST.queue.length){ST.typing=false;ST.timer=null;controls(MAP[ST.current]);const b=byId('faSafeTutNext');if(b)b.disabled=false;return}const seg=ST.queue[0];if(seg.delay){ST.queue.shift();ST.timer=setTimeout(step,seg.delay);return}if(!seg.text){ST.queue.shift();ST.timer=setTimeout(step,38);return}full+=seg.text.charAt(0);if(el)el.textContent=full;seg.text=seg.text.slice(1);ST.timer=setTimeout(step,38)}step()}
 function reveal(){if(!ST.typing)return;clearTimer();const el=byId('faSafeTutText');if(el)el.textContent=ST.full;ST.typing=false;controls(MAP[ST.current]);const b=byId('faSafeTutNext');if(b)b.disabled=false}
@@ -8122,7 +8122,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
     return res;
   }catch(e){ res.error=String(e&&e.stack||e); return res; } };
 
-  /* v0.22.8 debug fix: the MINO submit auto-move lives in a separate <script>
+  /* v0.22.9 debug fix: the MINO submit auto-move lives in a separate <script>
      block and could not see these IIFE-private definitions, so it silently did
      nothing. Expose them (read-only data) so the auto-move actually runs. */
   try{ if(typeof window!=='undefined'){ if(!window.DK)window.DK=DK; if(!window.DOCMETA)window.DOCMETA=DOCMETA; } }catch(e){}
@@ -8909,6 +8909,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }
   function launchSupplement(){
     removeSupp();
+    return; /* v0.22.9: supplemental S&E and IT toasts removed. They duplicated the main Lotta tour and fired after the final "Merci, Lotta" button. */
     var screen = byId('screen') || document.body;
     var root = document.createElement('div');
     root.id = 'fa18SuppRoot';
@@ -12734,7 +12735,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   G.FA0221_DECORATE=decorate;
   G.FA0222_DECORATE=decorate;
   function runTest(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       installStateBridge();
       if(!localS()||localS().mode==='title'){try{if(typeof start==='function')start();}catch(e){}}
@@ -12837,10 +12838,10 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   try{ spend=spend023; G.spend=spend; }catch(e){}
 
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.9'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
-        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.8'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
+        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.9'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
       });
     }catch(e){}
   }
@@ -12985,12 +12986,12 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   document.addEventListener('keydown',function(ev){
     try{ if(ev.key==='Escape' && by('faSafeTutRoot')) setTimeout(suppressTutSupplement,0); }catch(e){}
   },true);
-  // v0.22.8: legacy body-wide observer/interval disabled. Later layers maintain
+  // v0.22.9: legacy body-wide observer/interval disabled. Later layers maintain
   // credit, Focus text, and tutorial suppression without mutating on every DOM change.
   G.__FA0223_LEGACY_OBSERVER_DISABLED=true;
 
   G.FA0223_TEST=function(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       if(typeof boot==='function') boot();
       injectCredit();
@@ -13177,10 +13178,10 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.9'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
-        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.8'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
+        if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){ var __fa225Next='Year 1 · v0.22.9'; if((el.textContent||'')!==__fa225Next) el.textContent=__fa225Next; }
       });
     }catch(e){}
   }
@@ -13276,7 +13277,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
           var over=pre.focus > pre.max;
           var newOver=over ? Math.min(10, pre.overwhelm+1) : 0;
           var base=clampLocal(pre.energy + (pre.rest?4:0),0,12);
-          /* v0.22.8: Energy carries over between periods. The previous period's
+          /* v0.22.9: Energy carries over between periods. The previous period's
              ending Energy becomes the next period's starting Energy. There is no
              automatic per-period recovery; only deliberate player actions (log off
              early +4, coffee, personal day, vacation, sick day) restore Energy.
@@ -13354,7 +13355,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0224_TEST=function(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       if(typeof boot==='function') boot();
       ensureTitleCredit(); scheduleMaintain();
@@ -13410,11 +13411,11 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   function S_(){ try{ return (typeof S!=='undefined' && S) ? S : (G.S||null); }catch(e){ return G.S||null; } }
   function setS(v){ try{ S=v; }catch(e){} try{ G.S=v; }catch(e){} return v; }
   function stamp(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.9'; }catch(e){}
     try{
       Array.prototype.forEach.call(document.querySelectorAll('.tag'),function(el){
         if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){
-          var next='Year 1 · v0.22.8';
+          var next='Year 1 · v0.22.9';
           if((el.textContent||'')!==next) el.textContent=next;
         }
       });
@@ -13587,7 +13588,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0225_TEST=function(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       if(typeof boot==='function') boot();
       res.titleHasStart=!!document.querySelector('[data-act="start"]');
@@ -13644,11 +13645,11 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   function isItIntro(title,body,type){ return IT_INTRO_RE.test([title,body,type].map(txt).join(' ')); }
 
   function stamp226(){
-    try{ document.title='Fearless Advice: Year 1 · v0.22.8'; }catch(e){}
+    try{ document.title='Fearless Advice: Year 1 · v0.22.9'; }catch(e){}
     try{
       qsa('.tag').forEach(function(el){
         if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')){
-          var next='Year 1 · v0.22.8';
+          var next='Year 1 · v0.22.9';
           if((el.textContent||'')!==next) el.textContent=next;
         }
       });
@@ -13803,7 +13804,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   }catch(e){}
 
   G.FA0226_TEST=function(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       if(typeof boot==='function') boot();
       postClean();
@@ -13851,13 +13852,13 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
   if(G.FA0227_START_CREDIT_STABILITY) return;
   G.FA0227_START_CREDIT_STABILITY=true;
   var CREDIT='Lovingly vibecoded by Sancho Angulo in his off time.';
-  var VERSION='Year 1 · v0.22.8';
+  var VERSION='Year 1 · v0.22.9';
   function by(id){return document.getElementById(id);}
   function qsa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
   function S_(){try{return (typeof S!=='undefined'&&S)?S:(G.S||null);}catch(e){return G.S||null;}}
   function setS(v){try{S=v;}catch(e){} try{G.S=v;}catch(e){} return v;}
   function stamp(){
-    try{document.title='Fearless Advice: Year 1 · v0.22.8';}catch(e){}
+    try{document.title='Fearless Advice: Year 1 · v0.22.9';}catch(e){}
     try{qsa('.tag').forEach(function(el){ if(/YEAR 1|Year 1|v0\./i.test(el.textContent||'')) el.textContent=VERSION; });}catch(e){}
   }
   function singleCredit(){
@@ -13973,7 +13974,7 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
     r7.__fa0227PersonaWrapped=true; try{render=r7;G.render=render;}catch(e){}
   }
   G.FA0227_TEST=function(){
-    var res={version:'v0.22.8'};
+    var res={version:'v0.22.9'};
     try{
       if(typeof boot==='function') boot(); cleanTitle();
       res.startButton=!!document.querySelector('[data-act="start"]');
@@ -13991,5 +13992,171 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
 })(window);
 </script>
 
+<style id="fa0229-tutorial-launch-fix-style">
+  /* Tutorial launch fix - no visual changes */
+</style>
+<script id="fa0229-tutorial-launch-fix">
+/* Fearless Advice v0.22.9 — Tutorial Launch Fix (FA0229) */
+;(function(G){
+  'use strict';
+  if (G.FA0229_TUTORIAL_LAUNCH_FIX) return;
+  G.FA0229_TUTORIAL_LAUNCH_FIX = true;
+
+  function S_() {
+    try { return (typeof S !== 'undefined' && S) ? S : (G.S || null); }
+    catch(e) { return G.S || null; }
+  }
+
+  function gameIsPlaying() {
+    try {
+      var s = S_();
+      if (!s || s.mode === 'title' || s.mode == null) return false;
+      if (!Array.isArray(s.tasks) || s.tasks.length === 0) return false;
+      var status = document.getElementById('status');
+      if (status && status.style.display === 'none') return false;
+      return true;
+    } catch(e) { return false; }
+  }
+
+  function tutorialAlreadyShown() {
+    /* True if the tutorial overlay is open, or was dismissed this session */
+    if (document.getElementById('faSafeTutRoot')) return true;
+    try {
+      var s = S_();
+      if (s && s.flags && s.flags.tutorialDismissed) return true;
+    } catch(e) {}
+    return false;
+  }
+
+  function safeCopy(obj) {
+    try { return JSON.parse(JSON.stringify(obj)); } catch(e) { return null; }
+  }
+
+  function ensureTutorialFires() {
+    setTimeout(function() {
+      try {
+        /* Nothing to do if tutorial is already showing or game hasn't started */
+        if (tutorialAlreadyShown()) return;
+        if (!gameIsPlaying()) return;
+
+        var s = S_();
+        if (!s) return;
+
+        /* Snapshot full game state so we can restore it after calling start() */
+        var snapshot = safeCopy(s);
+        if (!snapshot) return;
+
+        /* Capture real functions before temporarily overriding them */
+        var origNewState  = (typeof newState  === 'function') ? newState  : null;
+        var origInitTasks = (typeof initTasks === 'function') ? initTasks : null;
+        var origRender    = (typeof render    === 'function') ? render    : null;
+
+        if (!origNewState) return; /* safety: can't proceed without newState */
+
+        /*
+         * Override newState() -> returns the snapshot (no state wipe).
+         * Override initTasks() -> no-op (no task list reset).
+         * Override render()    -> no-op (no inbox flash during the call).
+         * Then call start() — this runs the full chain, including the
+         * tutorial's start wrapper which queues setTimeout(launch, 80).
+         */
+        try { window.newState  = function() { return snapshot; }; } catch(e) { return; }
+        try { if (origInitTasks) window.initTasks = function() {}; } catch(e) {}
+        try { if (origRender)    window.render    = function() {}; } catch(e) {}
+
+        var called = false;
+        try {
+          if (typeof start === 'function') { start(); called = true; }
+        } catch(e) {}
+
+        /* Restore all overridden functions immediately after the synchronous call */
+        try { window.newState  = origNewState;  } catch(e) {}
+        try { if (origInitTasks) window.initTasks = origInitTasks; } catch(e) {}
+        try { if (origRender)    window.render    = origRender;    } catch(e) {}
+
+        if (!called) return;
+
+        /* Restore S to our snapshot (start() may have mutated it) */
+        try {
+          if (typeof S !== 'undefined') S = snapshot;
+          G.S = snapshot;
+        } catch(e) {}
+
+        /*
+         * 200ms later (after the tutorial's 80ms launch timeout has fired):
+         * ensure S is still our snapshot, and if the tutorial didn't appear
+         * for some reason, call render() to restore the correct game view.
+         */
+        setTimeout(function() {
+          try {
+            var cur = S_();
+            if (!cur || cur.mode === 'title') {
+              try {
+                if (typeof S !== 'undefined') S = snapshot;
+                G.S = snapshot;
+              } catch(e2) {}
+            }
+            if (!document.getElementById('faSafeTutRoot')) {
+              try { if (typeof render === 'function') render(); } catch(e) {}
+            }
+          } catch(e) {}
+        }, 200);
+
+      } catch(e) {}
+    }, 300); /* 300ms: enough time for start() + any existing queued timeouts to settle */
+  }
+
+  /*
+   * Wrap start() so that every call (via button click, act('start'), or any
+   * other trigger) goes through ensureTutorialFires() afterwards.
+   */
+  var _prevStart = (typeof start === 'function') ? start : null;
+  if (_prevStart && !_prevStart.__fa0229Wrapped) {
+    var _wrappedStart = function start_fa0229() {
+      var out;
+      try { out = _prevStart.apply(this, arguments); } catch(e) { throw e; }
+      ensureTutorialFires();
+      return out;
+    };
+    _wrappedStart.__fa0229Wrapped = true;
+    try { start = _wrappedStart; G.start = _wrappedStart; } catch(e) {}
+  }
+
+  /*
+   * Also wrap act() to catch act('start') calls.
+   * v0.22.5 intercepts act('start') and routes it to robustStart()
+   * WITHOUT going through the start() wrapper above — so we need this
+   * second hook to cover that path too.
+   */
+  var _prevAct = (typeof act === 'function') ? act : null;
+  if (_prevAct && !_prevAct.__fa0229Wrapped) {
+    var _wrappedAct = function act_fa0229(a, arg) {
+      var out;
+      try { out = _prevAct.apply(this, arguments); } catch(e) { throw e; }
+      if (a === 'start') ensureTutorialFires();
+      return out;
+    };
+    _wrappedAct.__fa0229Wrapped = true;
+    try { act = _wrappedAct; G.act = _wrappedAct; } catch(e) {}
+  }
+
+  /* Test hook: run FA0229_TEST() in the browser console to verify the patch */
+  G.FA0229_TEST = function() {
+    var res = { version: 'v0.22.9-tutorial-launch-fix', patch: 'FA0229' };
+    try {
+      res.patchActive      = !!G.FA0229_TUTORIAL_LAUNCH_FIX;
+      res.startWrapped     = typeof start === 'function' && !!start.__fa0229Wrapped;
+      res.actWrapped       = typeof act   === 'function' && !!act.__fa0229Wrapped;
+      res.gameIsPlaying    = gameIsPlaying();
+      res.tutorialShown    = tutorialAlreadyShown();
+      res.tutRootExists    = !!document.getElementById('faSafeTutRoot');
+      res.newStateFunction = typeof newState === 'function';
+      res.ok = res.patchActive && res.startWrapped && res.actWrapped;
+    } catch(e) { res.error = String(e && e.stack || e); }
+    return res;
+  };
+
+})(window);
+</script>
 </body>
 </html>
