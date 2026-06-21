@@ -13995,5 +13995,348 @@ window.__FA_SAFE_TUTORIAL_TEST__=function(){try{if(typeof boot==='function')boot
 })(window);
 </script>
 
+
+<script id="fa0228-bugfix-suite">
+/* fa0228-bugfix-suite — consolidated, non-disruptive fixes for the 8 reported bugs.
+   Loaded last, so every wrapper here is the OUTERMOST authority. Each fix degrades
+   gracefully (try/catch) and never touches the tutorial, the Start button, or any
+   unrelated gameplay system. */
+;(function(G){
+  'use strict';
+  if(G.__FA0228_BUGFIX) return;
+  G.__FA0228_BUGFIX = true;
+
+  /* ---------- tiny safe helpers ---------- */
+  function S_(){ try{ return G.S || (typeof S!=='undefined'?S:null); }catch(e){ return null; } }
+  function num(v,d){ v=Number(v); return isFinite(v)?v:(d===undefined?0:d); }
+  function clamp(v,lo,hi){ v=num(v,lo); return v<lo?lo:(v>hi?hi:v); }
+  function byId(id){ try{ return document.getElementById(id); }catch(e){ return null; } }
+  function call(name){
+    var args=Array.prototype.slice.call(arguments,1);
+    try{ var f=G[name]; if(typeof f==='function') return f.apply(null,args); }catch(e){}
+    return undefined;
+  }
+  function toastSafe(msg){ try{ call('toast',msg); }catch(e){} try{ call('toastX',msg); }catch(e){} }
+  function notifySafe(t,b,tag){ try{ call('notify',t,b,tag); }catch(e){} try{ call('notifyX',t,b,tag); }catch(e){} }
+  function stat(fn,amt){ try{ if(typeof G[fn]==='function') return G[fn](amt); }catch(e){} }
+
+  /* ================================================================
+     BUG-002 (monitor focus-ceiling persists) + BUG-004 (energy carries
+     over between periods). Outermost advance wrapper enforces both.
+     ================================================================ */
+  (function(){
+    var prev = (typeof G.advance==='function') ? G.advance : (typeof advance==='function'?advance:null);
+    if(!prev) return;
+    var wrapped = function advance_fa0228(rest){
+      var s = S_();
+      var preE = s ? num(s.energy,0) : 0;
+      var preBank = s ? num(s.bank,1) : 1;
+      var out = prev.apply(this, arguments);
+      try{
+        var s2 = S_();
+        if(s2 && num(s2.bank,0) === preBank + 1 && preBank <= 26){
+          s2.energy = clamp(preE + (rest ? 4 : 0), 0, 12);
+          s2.focusCeil = (s2.it && s2.it.monitor) ? 13 : 12;
+          s2.focusMax = (num(s2.energy,0) >= 4) ? 9 : 7;
+          try{ if('__fa0224FocusValue' in s2){ s2.__fa0224FocusSuspend=true; s2.focusSpent=0; s2.__fa0224FocusValue=0; s2.__fa0224FocusSuspend=false; } }catch(e){}
+          try{ if(typeof G.drawStatus==='function' && s2.mode!=='title') G.drawStatus(); }catch(e){}
+        }
+      }catch(e){}
+      return out;
+    };
+    try{ advance = wrapped; }catch(e){}
+    try{ G.advance = wrapped; }catch(e){}
+  })();
+
+  /* ================================================================
+     Energy-invariance helper for BUG-003 (Ask for help) and BUG-005
+     (MyGCHR HR-file actions). Energy may change ONLY via fatigue from
+     Focus spent; any restoration/grant is erased.
+     ================================================================ */
+  var FATIGUE_THRESHOLDS = [3,6,9,12];
+  function fatigueBetween(f0, f1, charged0){
+    var c = 0;
+    for(var i=0;i<FATIGUE_THRESHOLDS.length;i++){
+      var t = FATIGUE_THRESHOLDS[i];
+      if(f0 < t && f1 >= t && !charged0[t]) c++;
+    }
+    return c;
+  }
+  function withEnergyInvariance(fn){
+    var s = S_();
+    if(!s) return fn();
+    var e0 = num(s.energy,0);
+    var f0 = num(s.focusSpent,0);
+    var bank0 = num(s.bank,1);
+    var charged0 = {};
+    try{ var ct = s.__fa0224ChargedThresholds; if(ct){ for(var k in ct){ if(ct[k]) charged0[k]=true; } } }catch(e){}
+    var out = fn();
+    try{
+      var s2 = S_();
+      if(s2){
+        var f1 = num(s2.focusSpent,0);
+        var fatigue = (num(s2.bank,1) === bank0) ? fatigueBetween(f0, f1, charged0) : 0;
+        s2.energy = clamp(e0 - fatigue, 0, 12);
+        s2.focusMax = (num(s2.energy,0) >= 4) ? 9 : 7;
+      }
+    }catch(e){}
+    return out;
+  }
+
+  /* ================================================================
+     BUG-001 — Security-incident task choices.
+     ================================================================ */
+  function isSecurityIncidentTask(t){
+    if(!t) return false;
+    try{ return String(t.seType||'').toLowerCase() === 'suspicious'; }catch(e){ return false; }
+  }
+  function escAttr(v){ return String(v==null?'':v).replace(/"/g,'&quot;'); }
+  function secButton(label, hint, arg, cls){
+    try{ if(typeof G.actBtn==='function') return G.actBtn(label, hint, arg, false, cls||''); }catch(e){}
+    return '<button class="act '+(cls||'')+'" data-act="task" data-arg="'+escAttr(arg)+'">'+
+      '<span>'+label+'</span><span class="h">'+hint+'</span></button>';
+  }
+  function secOptionsHTML(t){
+    var id = t.id;
+    return [
+      secButton('\u{1F534} Send to Security & Ethics',
+        'The correct call. Forward suspected security concerns to the people whose job this is. Resolves cleanly.',
+        'secact:'+id+':se', ''),
+      secButton('\u{1F534} Give the person the information they want',
+        'Friendly, helpful, and a reportable security incident. Forces a mandatory Security Refresher.',
+        'secact:'+id+':giveinfo', 'human'),
+      secButton('\u{1F534} Send to manager',
+        'A valid escalation when you are unsure. Slower, but safe.',
+        'secact:'+id+':manager', ''),
+      secButton('Ignore',
+        'Leave it. No follow-up and no consequence — this time.',
+        'secact:'+id+':ignore', '')
+    ].join('');
+  }
+  function spawnRefresher(s){
+    try{
+      var due = Math.min(26, num(s.bank,1) + 2);
+      var task = {
+        id: 'se_refresher_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+        title: 'MANDATORY: Security Refresher (incident follow-up)',
+        from: 'Departmental Security Officer',
+        due: due, req: 1, sign: 1, kind: 'admin',
+        status: 'new', unread: true, mandatory: true, securityTag: 'Pro A',
+        flavour: 'Following a recorded security incident, you must complete a Security Refresher. Completion is not optional; only the deadline is negotiable, and even that only on paper.',
+        intro: 'A security incident was recorded against your inbox. Please complete the mandatory Security Refresher.',
+        msgs: [{ who: 'Departmental Security Officer', body: 'A security incident was recorded. Complete the mandatory Security Refresher by the due date. We have attached nothing useful, as is tradition.' }]
+      };
+      var t = (typeof G.T === 'function') ? G.T(task) : task;
+      if(typeof G.add === 'function'){ G.add(t); }
+      else if(typeof G.mkTask === 'function'){ G.mkTask(t); }
+      else { s.tasks = s.tasks || []; s.tasks.push(t); }
+    }catch(e){}
+  }
+  function handleSecAct(arg){
+    var parts = String(arg).split(':');
+    var id = parts[1], choice = parts[2];
+    var s = S_(); if(!s) return;
+    var t = (s.tasks || []).find(function(x){ return String(x && x.id) === String(id); });
+    if(!t) return;
+    function chargeOneFocus(){ try{ if(typeof G.canSpend==='function' && !G.canSpend(1)) return; if(typeof G.spend==='function') G.spend(1); }catch(e){} }
+    t.msgs = t.msgs || [];
+    if(choice === 'se'){
+      chargeOneFocus();
+      t.status='done'; t.unread=false; t.dead=false;
+      t.msgs.push({who:'You', body:'Forwarded to Security & Ethics as a suspected security concern. They will take it from here, calmly, with a ticket number.'});
+      stat('chJudgment',0.3); stat('chMgr',0.1);
+      toastSafe('Routed to Security & Ethics. Correct call — quietly resolved.');
+    } else if(choice === 'giveinfo'){
+      chargeOneFocus();
+      t.status='done'; t.unread=false; t.dead=false;
+      t.msgs.push({who:'You', body:'You provided the information requested. It felt helpful. It is later recorded as a security incident.'});
+      stat('chJudgment',-0.6); stat('chRep',-0.6); stat('chMgr',-0.4);
+      spawnRefresher(s);
+      notifySafe('Security incident recorded','A security incident has been logged. A mandatory Security Refresher has been added to your inbox.','Security');
+      toastSafe('Security incident. A mandatory Security Refresher is now in your inbox.');
+    } else if(choice === 'manager'){
+      chargeOneFocus();
+      t.status='done'; t.unread=false; t.dead=false;
+      t.msgs.push({who:'You', body:'Escalated to your manager for a decision. Cautious, defensible, faintly bureaucratic.'});
+      stat('chMgr',0.05);
+      toastSafe('Escalated to your manager. A valid, if cautious, choice.');
+    } else if(choice === 'ignore'){
+      t.status='done'; t.unread=false; t.dead=true; t.seNoFollow=true;
+      t.msgs.push({who:'You', body:'You ignored it. Nothing happened. This time.'});
+      toastSafe('Ignored. No follow-up, no consequence.');
+    } else { return; }
+    s.selected=null; s.mode='play'; s.tab='inbox';
+    try{ if(typeof G.render==='function') G.render(); }catch(e){}
+  }
+
+  (function(){
+    var prev = (typeof G.renderTask==='function') ? G.renderTask : (typeof renderTask==='function'?renderTask:null);
+    if(!prev) return;
+    var wrapped = function renderTask_fa0228(){
+      var out = prev.apply(this, arguments);
+      try{
+        var s = S_(); if(!s) return out;
+        var t = (s.tasks || []).find(function(x){ return String(x && x.id) === String(s.selected); });
+        if(t && isSecurityIncidentTask(t) && t.status!=='done' && !t.dead){
+          var v = byId('view');
+          if(v){
+            var acts = v.querySelector('.acts');
+            if(acts){ acts.innerHTML = secOptionsHTML(t); }
+            else {
+              var host = v.querySelector('.det') || v;
+              var d = document.createElement('div'); d.className='acts'; d.innerHTML = secOptionsHTML(t); host.appendChild(d);
+            }
+          }
+        }
+      }catch(e){}
+      return out;
+    };
+    try{ renderTask = wrapped; }catch(e){}
+    try{ G.renderTask = wrapped; }catch(e){}
+  })();
+
+  /* ================================================================
+     BUG-007 — Tablet to Laptop: all tasks cost 1 less Focus (floor 1).
+     ================================================================ */
+  (function(){
+    var prev = (typeof G.doWork==='function') ? G.doWork : (typeof doWork==='function'?doWork:null);
+    if(!prev) return;
+    var wrapped = function doWork_fa0228(t, tier){
+      var s = S_();
+      var ti = Math.max(1, Math.min(4, Math.round(num(tier,1))));
+      var hasLaptop = !!(s && s.it && s.it.laptop);
+      var origCost = null, savedLaptop = null, E = (typeof G.EFFORT!=='undefined'?G.EFFORT:(typeof EFFORT!=='undefined'?EFFORT:null));
+      if(hasLaptop && E && E[ti] && typeof E[ti][0]==='number'){
+        origCost = E[ti][0];
+        E[ti][0] = Math.max(1, origCost - 1);
+        savedLaptop = s.it.laptop;
+        s.it.laptop = false;
+      }
+      var out;
+      try{ out = prev.apply(this, arguments); }
+      finally{
+        try{
+          if(hasLaptop){
+            if(origCost != null && E && E[ti]) E[ti][0] = origCost;
+            if(s && savedLaptop != null) s.it.laptop = savedLaptop;
+          }
+        }catch(e){}
+      }
+      return out;
+    };
+    try{ doWork = wrapped; }catch(e){}
+    try{ G.doWork = wrapped; }catch(e){}
+  })();
+
+  /* ================================================================
+     act() dispatcher wrapper.
+     ================================================================ */
+  (function(){
+    var prev = (typeof G.act==='function') ? G.act : (typeof act==='function'?act:null);
+    if(!prev) return;
+    var wrapped = function act_fa0228(a, arg){
+      var argStr = String(arg==null?'':arg);
+      var r;
+      if(a === 'task' && /^secact:/.test(argStr)){
+        r = handleSecAct(argStr);
+      } else if(a === 'task' && /^(helpconfirm|askhelp):/.test(argStr)){
+        r = withEnergyInvariance(function(){ return prev.call(this, a, arg); });
+      } else if(a === 'fa194HRAction'){
+        r = withEnergyInvariance(function(){ return prev.call(this, a, arg); });
+      } else {
+        r = prev.call(this, a, arg);
+      }
+      try{
+        var s = S_();
+        if(s && s.mode !== 'title'){ repairFocus(s); if(typeof G.drawStatus==='function') G.drawStatus(); }
+      }catch(e){}
+      return r;
+    };
+    try{ act = wrapped; }catch(e){}
+    try{ G.act = wrapped; }catch(e){}
+  })();
+
+  /* ================================================================
+     BUG-006 — Vacant student slot fully non-interactive in Ask-for-help.
+     ================================================================ */
+  (function(){
+    var prev = (typeof G.render==='function') ? G.render : (typeof render==='function'?render:null);
+    if(!prev) return;
+    var wrapped = function render_fa0228(){
+      var out = prev.apply(this, arguments);
+      try{
+        var s = S_();
+        if(s && s.mode === 'helpPick'){
+          var v = byId('view');
+          if(v){
+            var cards = v.querySelectorAll('.fa18HelpCard');
+            Array.prototype.forEach.call(cards, function(card){
+              var txt = (card.textContent || '');
+              if(/VACANT|no occupant|conceptual art/i.test(txt)){
+                card.removeAttribute('data-act');
+                card.removeAttribute('data-arg');
+                if((' '+card.className+' ').indexOf(' fa18HelpUnavailable ') < 0){
+                  card.className = (card.className + ' done fa18HelpUnavailable').replace(/^\s+|\s+$/g,'');
+                }
+                try{ card.style.cursor = 'not-allowed'; card.style.pointerEvents = 'none'; }catch(e){}
+              }
+            });
+          }
+        }
+      }catch(e){}
+      return out;
+    };
+    try{ render = wrapped; }catch(e){}
+    try{ G.render = wrapped; }catch(e){}
+  })();
+
+  /* ================================================================
+     BUG-008 — Focus tracking integrity self-heal.
+     ================================================================ */
+  function repairFocus(s){
+    s = s || S_(); if(!s) return;
+    try{
+      var ceil = (s.it && s.it.monitor) ? 13 : 12;
+      if(!isFinite(num(s.focusCeil, NaN)) || num(s.focusCeil,0) < 12 || num(s.focusCeil,0) > 13){
+        s.focusCeil = ceil;
+      }
+      var fs = s.focusSpent;
+      if(typeof fs !== 'number' || !isFinite(fs)){
+        var backup = num(s.__fa0224FocusValue, 0);
+        try{ s.focusSpent = clamp(backup, 0, num(s.focusCeil,12)); }catch(e){}
+      } else if(fs < 0 || fs > num(s.focusCeil,12)){
+        try{ s.focusSpent = clamp(fs, 0, num(s.focusCeil,12)); }catch(e){}
+      }
+      try{
+        if('__fa0224FocusValue' in s){
+          var live = num(s.focusSpent,0), mirror = num(s.__fa0224FocusValue,0);
+          if(live !== mirror){ s.__fa0224FocusValue = live; }
+        }
+      }catch(e){}
+      s.focusMax = (num(s.energy,0) >= 4) ? 9 : 7;
+    }catch(e){}
+  }
+  (function(){
+    var prev = (typeof G.drawStatus==='function') ? G.drawStatus : (typeof drawStatus==='function'?drawStatus:null);
+    if(!prev) return;
+    var wrapped = function drawStatus_fa0228(){
+      try{ repairFocus(S_()); }catch(e){}
+      return prev.apply(this, arguments);
+    };
+    try{ drawStatus = wrapped; }catch(e){}
+    try{ G.drawStatus = wrapped; }catch(e){}
+  })();
+
+  G.FA0228_TEST = function(){
+    return {
+      installed: !!G.__FA0228_BUGFIX,
+      hasAdvance: typeof G.advance==='function',
+      hasAct: typeof G.act==='function',
+      hasRenderTask: typeof G.renderTask==='function'
+    };
+  };
+})(window);
+
+</script>
 </body>
 </html>
